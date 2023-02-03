@@ -7,29 +7,68 @@ class Board extends CI_Controller
         public function __construct()
         {
                 parent::__construct();
-                $this->load->model('news_model');
+                $this->load->model('board_model');
+                // $this->load->database();
         }
 
         public function index()
         {
-                $this->load->view('board/index');
+                $this->load->view('index');
         }
 
         public function board_list()
         {
-                $this->load->view('board/index');
-                $this->load->view('board/board_list');
+                $this->load->view('index');
+                $this->load->view('board_list');
         }
         public function write_ok()
         {
-                $this->board_model->insert_board();
+                $return_value = $this->board_model->insert_board();
+                echo $return_value;
         }
+        public function getList()
+        {
+                $HEADER_HTML = "
+                <div class='row mt-5'>
+                <div class='col-12'>
+                  <table class='table container table table-striped'>
+                    <thead>
+                      <tr>
+                        <th scope='col'>NO</th>
+                        <th scope='col'>이름</th>
+                        <th scope='col'>제목</th>
+                        <th scope='col'>등록일</th>
+                      </tr>
+                    </thead>
+                    <tbody>";
+                $FOOTER_HTML = "
+                        </tbody>
+                        </table>
+                </div>
+                </div>
+                ";
+                $return_html = $HEADER_HTML;
 
-/*       public function board_create()
-{
-$this->load->view('board/index');
-$this->load->view('board/board_create');
-} */
+                $return_value = $this->board_model->getList();
+                $data['board'] = $return_value;
+                // var_dump($data['board']);
+                // exit();
+                $idx = 0;
+                foreach ($data['board'] as $items) {
+                        $idx++;
+                        $return_html .= "
+                                <tr>
+                                <th scope='row'>$idx</th>
+                                <td>$items[name]</td>
+                                <td>$items[title]</td>
+                                <td><small>$items[adddate]</small></td>
+                                </tr>
+                       ";
+
+                }
+                $return_html .= $FOOTER_HTML;
+                echo $return_html;
+        }
 
 
 }
