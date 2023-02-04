@@ -8,6 +8,7 @@ class Board_model extends CI_Model
     $this->load->database();
   }
 
+  // INSERT : 게시물 DB에 저장
   public function insert_board()
   {
     $this->load->helper('date');
@@ -22,6 +23,7 @@ class Board_model extends CI_Model
     return $this->db->insert('board', $data);
   }
 
+  // SELECT : DB에서 board 테이블 전부 가져오기
   public function getList()
   {
     $SQL = "select code, title, contents, name, adddate from board order by adddate desc ";
@@ -29,4 +31,12 @@ class Board_model extends CI_Model
     return $query->result_array();
   }
 
+  // SELECT ~ WHERE : 제목클릭하면 해당 게시물만 가져오기
+  public function getView()
+  {
+    $CODE = $this->input->post('CODE');
+    $SQL = "select code, title, contents, name, adddate from board where code= '$CODE'";
+    $query = $this->db->query($SQL);
+    return $query->row();
+  }
 }

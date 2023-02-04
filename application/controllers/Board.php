@@ -13,13 +13,13 @@ class Board extends CI_Controller
 
         public function index()
         {
-                $this->load->view('index');
+                $this->load->view('board/index');
         }
 
         public function board_list()
         {
-                $this->load->view('index');
-                $this->load->view('board_list');
+                $this->load->view('board/index');
+                $this->load->view('board/board_list');
         }
         public function write_ok()
         {
@@ -60,7 +60,7 @@ class Board extends CI_Controller
                                 <tr>
                                 <th scope='row'>$idx</th>
                                 <td>$items[name]</td>
-                                <td>$items[title]</td>
+                                <td><a style='cursor:pointer' onclick='viewBoard(\"$items[code]\")'><b>$items[title]<b></a></td>
                                 <td><small>$items[adddate]</small></td>
                                 </tr>
                        ";
@@ -68,6 +68,13 @@ class Board extends CI_Controller
                 }
                 $return_html .= $FOOTER_HTML;
                 echo $return_html;
+        }
+
+        public function getView()
+        {
+                $data = $this->board_model->getView();
+                // 실무에서는 xml로 할 것.(이 방식은 비추지만 테스트로 작성해보기 좋다)
+                echo $data->name . "^" . $data->title . "^" . $data->contents . "^" . $data->adddate . "^" . $data->code;
         }
 
 

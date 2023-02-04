@@ -48,11 +48,79 @@
       $('#' + IDS).bPopup();
       // $('#writeBody').bPopup();
     }
+    // 글쓰기 버튼 클릭 이벤트
     function addBoard() {
       openMessage('writeBody')
     }
+    // 제목 클릭 이벤트
+    function viewBoard(CODE) {
+      $.ajax({
+        type: 'POST',
+        url: "board/getView",
+        data: { CODE: CODE },
+        cache: false,
+        async: false
+      })
+        .done(function (html) {
+          let html_array = html.split("^");
+          if (html_array.length == 5) {
+            let name = html_array[0];
+            let title = html_array[1];
+            let contents = html_array[2];
+            let adddate = html_array[3];
+            let code = html_array[4];
+
+            $('#name_view').val(name);
+            $('#title_view').val(title);
+            $('#contents_view').val(contents);
+            $('#adddate_view').val(adddate);
+            $('#code_view').val(code);
+          } else {
+            alert("Error");
+          }
+        });
+      openMessage('viewBody')
+    }
     // 작성한 내용 저장
     function execSave() {
+      if (!$("#name").val()) {
+        alert("이름을 입력하세요");
+        $("#name").focus();
+        return false;
+      }
+      if (!$("#title").val()) {
+        alert("제목을 입력하세요");
+        $("#title").focus();
+        return false;
+      }
+      if (!$("#contents").val()) {
+        alert("내용을 입력하세요");
+        $("#contents").focus();
+        return false;
+      }
+      let name = $("#name").val();
+      let title = $("#title").val();
+      let contents = $("#contents").val();
+
+      $.ajax({
+        type: 'POST',
+        url: 'board/write_ok',
+        data: { name: name, title: title, contents: contents }, // 전송할 데이터
+        cache: false,
+        async: false //이 기능이 전부 실행 되어야 다음 단계로 넘어가 의도하지 않은 에러 방지
+      })
+        .done(function (html) {
+          if (html == "1") {
+            alert("성공적으로 저장 되었습니다");
+            board_init(); //입력창 초기화
+            loadinglist(); //방금 저장한것까지 리스트 업데이트
+          } else {
+            alert("Error:" + html);
+          }
+        });
+    }
+    // 수정한 내용 저장
+    function execUpdate() {
       if (!$("#name").val()) {
         alert("이름을 입력하세요");
         $("#name").focus();
@@ -108,22 +176,22 @@
     <div class="row my-3">
       <div class="col-12">
         <label>이름</label>
-        <input type="text" class="form-control" name="name" id="name">
+        <input type="text" class="form-control border border-secondary" name="name" id="name">
       </div>
     </div>
     <!-- category select option  -->
     <div class="row my-3">
       <div class="col-12">
         <label>제목</label>
-        <input type="text" class="form-control" name="title" id="title">
+        <input type="text" class="form-control border border-secondary" name="title" id="title">
       </div>
     </div>
     <!-- contents -->
     <div class="row mt-3">
       <div class="col-12">
         <label for="floatingTextarea2">내용</label>
-        <textarea class="form-control" placeholder="Leave a comment here" id="contents" name="contents"
-          style="height: 200px"></textarea>
+        <textarea class="form-control border border-secondary" placeholder="Leave a comment here" id="contents"
+          name="contents" style="height: 200px"></textarea>
       </div>
     </div>
     <!-- 포스팅만들기 전송  -->
@@ -136,6 +204,43 @@
     </div>
   </div>
 
+  <!-- 상세보기 팝업 -->
+  <div class="container p-5" id="viewBody" style="display: none; width: 80%; height: 40rem; background-color: white;">
+    <input type="hidden" name="code_view" id="code_view">
+    <div class="row my-3">
+      <div class="col-12">
+        <label>이름</label>
+        <input type="text" class="form-control" name="name_view" id="name_view" readonly>
+      </div>
+    </div>
+    <div class="row my-3">
+      <div class="col-12">
+        <label>작성일</label>
+        <input type="text" class="form-control" name="adddate_view" id="adddate_view" readonly>
+      </div>
+    </div>
+    <div class="row my-3">
+      <div class="col-12">
+        <label>제목</label>
+        <input type="text" class="form-control" name="title_view" id="title_view">
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-12">
+        <label for="floatingTextarea2">내용</label>
+        <textarea class="form-control" placeholder="Leave a comment here" id="contents_view" name="contents_view"
+          style="height: 200px"></textarea>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <div class="col-12">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <button class="btn btn-primary me-md-2" type="button" id="update" onclick="execUpdate()">수정하기</button>
+          <button class="btn btn-success" type="button" id="delete" onclick="execDelete()">삭제하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>
