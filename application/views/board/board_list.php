@@ -25,6 +25,7 @@
       $("#contents").val("");
 
       $('#writeBody').bPopup().close();
+      $('#viewBody').bPopup().close();
     }
     // 문서가 모두 로드되면
     $(document).ready(function () {
@@ -121,41 +122,62 @@
     }
     // 수정한 내용 저장
     function execUpdate() {
-      if (!$("#name").val()) {
-        alert("이름을 입력하세요");
-        $("#name").focus();
-        return false;
-      }
-      if (!$("#title").val()) {
+      if (!$("#title_view").val()) {
         alert("제목을 입력하세요");
         $("#title").focus();
         return false;
       }
-      if (!$("#contents").val()) {
+      if (!$("#contents_view").val()) {
         alert("내용을 입력하세요");
         $("#contents").focus();
         return false;
       }
-      let name = $("#name").val();
-      let title = $("#title").val();
-      let contents = $("#contents").val();
+      let title = $("#title_view").val();
+      let contents = $("#contents_view").val();
+      let code = $("#code_view").val();
 
       $.ajax({
         type: 'POST',
-        url: 'board/write_ok',
-        data: { name: name, title: title, contents: contents }, // 전송할 데이터
+        url: 'board/update',
+        data: { title: title, contents: contents, code: code }, // 전송할 데이터
         cache: false,
         async: false //이 기능이 전부 실행 되어야 다음 단계로 넘어가 의도하지 않은 에러 방지
       })
         .done(function (html) {
           if (html == "1") {
-            alert("성공적으로 저장 되었습니다");
+            alert("성공적으로 수정 되었습니다");
             board_init(); //입력창 초기화
             loadinglist(); //방금 저장한것까지 리스트 업데이트
           } else {
             alert("Error:" + html);
           }
         });
+    }
+    function execDelete() {
+      if (confirm("해당 게시물을 삭제하시겠습니까?") == true) {
+        let code = $("#code_view").val();
+
+        $.ajax({
+          type: 'POST',
+          url: 'board/delete',
+          data: { code: code }, // 전송할 데이터
+          cache: false,
+          async: false //이 기능이 전부 실행 되어야 다음 단계로 넘어가 의도하지 않은 에러 방지
+        })
+          .done(function (html) {
+            if (html == "1") {
+              alert("성공적으로 삭제 되었습니다");
+              board_init(); //입력창 초기화
+              loadinglist(); //방금 저장한것까지 리스트 업데이트
+            } else {
+              alert("Error:" + html);
+            }
+          });
+      } else {
+        board_init(); //입력창 초기화
+        loadinglist(); //방금 저장한것까지 리스트 업데이트
+      }
+
     }
   </script>
 </head>
@@ -165,6 +187,24 @@
   <div id="tableBody">
     <!-- 데이터베이스에서 가져온 데이터를 테이블로 보여줌 -->
   </div>
+  <!-- 페이지네이션 -->
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li class="page-item">
+        <a class="page-link" href="#" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <li class="page-item"><a class="page-link" href="#">1</a></li>
+      <li class="page-item"><a class="page-link" href="#">2</a></li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li>
+      <li class="page-item">
+        <a class="page-link" href="#" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
   <!-- bootstrap button -->
   <div class="d-grid gap-2 d-md-flex justify-content-md-end container mt-3">
     <button class="btn btn-primary" type="button" onclick="addBoard()">글쓰기</button>

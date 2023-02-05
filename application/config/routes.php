@@ -51,7 +51,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 */
 // $route['board'] = 'board/index';
 $route['list'] = 'board/board_list';
-$route['board/getList'] = 'board/getList';
+// $route['board/getList'] = 'board/getList';
 // $route['board/create'] = 'board/board_create';
 // $route['(:any)'] = 'board/view/$1';
 $route['default_controller'] = 'board';

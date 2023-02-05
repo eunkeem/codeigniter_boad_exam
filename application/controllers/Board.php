@@ -26,6 +26,17 @@ class Board extends CI_Controller
                 $return_value = $this->board_model->insert_board();
                 echo $return_value;
         }
+        public function update()
+        {
+                $return_value = $this->board_model->update_board();
+                echo $return_value;
+        }
+        public function delete()
+        {
+                $return_value = $this->board_model->delete_board();
+                echo $return_value;
+        }
+
         public function getList()
         {
                 $HEADER_HTML = "

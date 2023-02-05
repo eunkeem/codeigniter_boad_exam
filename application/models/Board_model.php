@@ -22,7 +22,28 @@ class Board_model extends CI_Model
 
     return $this->db->insert('board', $data);
   }
+  // UPDATE : 게시물 DB에 update
+  public function update_board()
+  {
+    $where = array(
+      'code' => $this->input->post('code')
+    );
+    $data = array(
+      'title' => $this->input->post('title'),
+      'contents' => $this->input->post('contents')
+    );
 
+    return $this->db->update('board', $data, $where);
+  }
+  // DELETE : 게시물 DB에 delete
+  public function delete_board()
+  {
+    $where = array(
+      'code' => $this->input->post('code')
+    );
+
+    return $this->db->delete('board', $where);
+  }
   // SELECT : DB에서 board 테이블 전부 가져오기
   public function getList()
   {
